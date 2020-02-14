@@ -17,7 +17,7 @@ LDLIBS = -lrt -Wl,--start-group $(MKLROOT)/lib/intel64/libmkl_intel_lp64.a $(MKL
 const char* dgemm_desc = "Simple blocked dgemm.";
 
 #if !defined(BLOCK_SIZE)
-#define BLOCK_SIZE 64
+#define BLOCK_SIZE 32
 #endif
 
 #define min(a,b) (((a)<(b))?(a):(b))
@@ -25,7 +25,7 @@ const char* dgemm_desc = "Simple blocked dgemm.";
 /* This auxiliary subroutine performs a smaller dgemm operation
  *  C := C + A * B
  * where C is M-by-N, A is M-by-K, and B is K-by-N. */
-static void do_block (int lda, int M, int N, int K, double* A, double* B, double* C)
+static void do_block (int lda, int M, int N, int K, double* A, double* B, double* restrict C)
 {
   /* For each row i of A */
   int numUnrolls = 8;
@@ -35,9 +35,9 @@ static void do_block (int lda, int M, int N, int K, double* A, double* B, double
   __m256d c[numUnrolls];
   // Taking into account the 4 data points loaded from SIMD
   // and the number of loops we are unrolling
-  for (i = 0; i < M-M%(4*numUnrolls); i+=4*numUnrolls){
     /* For each column j of B */ 
-    for (j = 0; j < N; ++j){
+  for (j = 0; j < N; ++j){
+    for (i = 0; i < M-M%(4*numUnrolls); i+=4*numUnrolls){
       /* Get C(i,j) */
       for (n=0; n<numUnrolls; ++n)
         c[n] = _mm256_loadu_pd(C+i+j*lda+n*4); 
@@ -49,7 +49,7 @@ static void do_block (int lda, int M, int N, int K, double* A, double* B, double
         b = _mm256_broadcast_sd(B+k+j*lda);
         for (n=0; n<numUnrolls; ++n){
           a = _mm256_loadu_pd(A+i+k*lda+n*4);
-          c[n] = _mm256_fmadd_pd(b,a,c[n]);
+          c[n] = _mm256_fmadd_pd(a,b,c[n]);
           }
         }
       for (n=0; n<numUnrolls; ++n)
