@@ -6,7 +6,7 @@ COMPILER= gnu
     Please include All compiler flags and libraries as you want them run. You can simply copy this over from the Makefile's first few lines
  
 CC = icc
-OPT = -O3 -mavx2
+OPT = -Ofast -mavx2
 CFLAGS = -Wall -std=gnu99 $(OPT)
 MKLROOT = /opt/intel/composer_xe_2013.1.117/mkl
 LDLIBS = -lrt -Wl,--start-group $(MKLROOT)/lib/intel64/libmkl_intel_lp64.a $(MKLROOT)/lib/intel64/libmkl_sequential.a $(MKLROOT)/lib/intel64/libmkl_core.a -Wl,--end-group -lpthread -lm
