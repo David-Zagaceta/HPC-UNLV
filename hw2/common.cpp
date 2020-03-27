@@ -46,14 +46,6 @@ double set_size( int n )
 }
 
 //
-// get cutoff
-//
-double get_cutoff()
-{
-    return cutoff;
-}
-
-//
 //  Initialize the particle positions and velocities
 //
 void init_particles( int n, particle_t *p )
