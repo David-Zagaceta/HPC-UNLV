@@ -6,7 +6,7 @@
 #include "common.h"
 
 
-double blockSize,boxLength;
+double blockSize;
 int numBlocks;
 
 void buildBlocks(std::vector<std::vector<particle_t>>& blocks, particle_t* particles, int n, double boxLength)
