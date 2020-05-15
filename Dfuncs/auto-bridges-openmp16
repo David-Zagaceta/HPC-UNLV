@@ -1,0 +1,20 @@
+#!/bin/bash
+#SBATCH -J auto-wigner-openmp16
+#SBATCH -o auto-wigner-openmp16.stdout
+#SBATCH -n 16         
+#SBATCH -p RM
+#SBATCH -t 00:10:00     
+#SBATCH -N 1        
+
+./Recursive 
+export OMP_NUM_THREADS=1
+./Poly
+export OMP_NUM_THREADS=2
+./Poly
+export OMP_NUM_THREADS=4
+./Poly
+export OMP_NUM_THREADS=8
+./Poly
+export OMP_NUM_THREADS=16
+./Poly
+
